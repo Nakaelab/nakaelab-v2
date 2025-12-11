@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>南国フルーツキャッチゲーム 🌴</title>
   
   <style>
@@ -10,6 +10,8 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     body {
@@ -20,6 +22,7 @@
       align-items: center;
       min-height: 100vh;
       overflow: hidden;
+      touch-action: none;
     }
 
     .game-container {
@@ -33,45 +36,48 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(10px);
       border: 3px solid rgba(255, 255, 255, 0.5);
+      touch-action: none;
     }
 
     .score {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: bold;
-      margin-top: 20px;
+      margin-top: 15px;
       text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
       color: #2c5530;
     }
 
     .lives {
-      font-size: 24px;
-      margin-top: 10px;
+      font-size: 20px;
+      margin-top: 8px;
       color: #c41e3a;
       font-weight: bold;
     }
 
     .instructions {
-      margin-top: 15px;
-      font-size: 16px;
+      margin-top: 12px;
+      font-size: 14px;
       color: #2c5530;
       font-weight: 600;
     }
 
     .game-over {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.85);
-      padding: 40px 60px;
+      background: rgba(0, 0, 0, 0.9);
+      padding: 30px 50px;
       border-radius: 20px;
       display: none;
       color: white;
+      z-index: 1000;
     }
 
     .game-over h2 {
-      font-size: 48px;
-      margin-bottom: 20px;
+     font-size: 28px;  /* 小さくした */
+     margin-bottom: 15px;
+     line-height: 1.3;  /* 行間も調整 */
     }
 
     .game-over button {
@@ -86,13 +92,25 @@
       transition: transform 0.2s;
     }
 
-    .game-over button:hover {
-      transform: scale(1.05);
+    .game-over button:active {
+      transform: scale(0.95);
     }
 
     .warning {
       color: #ff4444;
       font-weight: bold;
+    }
+
+    @media (max-width: 480px) {
+      .score {
+        font-size: 24px;
+      }
+      .lives {
+        font-size: 18px;
+      }
+      .instructions {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -101,12 +119,12 @@
     <canvas id="gameCanvas" width="400" height="600"></canvas>
     <div class="score">🥥 スコア: <span id="score">0</span></div>
     <div class="lives">💚 ライフ: <span id="lives">2</span></div>
-    <div class="instructions">← → キーで移動 | <span class="warning">🦂 小蠍×2 / 大蠍×1でアウト!</span></div>
+    <div class="instructions">画面タッチまたは← → キーで移動 | <span class="warning">🦂 小蠍×2 / 大蠍×1でアウト!</span></div>
   </div>
 
   <div class="game-over" id="gameOver">
     <h2 id="gameOverTitle">ゲームオーバー!</h2>
-    <p style="font-size: 24px; margin-bottom: 30px;">スコア: <span id="finalScore">0</span></p>
+    <p style="font-size: 22px; margin-bottom: 25px;">スコア: <span id="finalScore">0</span></p>
     <button onclick="restartGame()">もう一度挑戦 🌴</button>
   </div>
 
@@ -125,11 +143,13 @@
     
     let fallingObjects = [];
     let score = 0;
-    let lives = 2; // スモール蠍用のライフ
+    let lives = 2;
     let gameActive = true;
     let keys = {};
+    let touchActive = false;
+    let touchX = 0;
     
-    // フルーツの種類(emoji, points, rarity, size, speed)
+    // フルーツの種類
     const fruitTypes = [
       { emoji: '🍌', points: 5, rarity: 0.25, size: 35, speed: 1.5 },
       { emoji: '🍎', points: 10, rarity: 0.20, size: 35, speed: 1.8 },
@@ -140,7 +160,48 @@
       { emoji: '🍍', points: 30, rarity: 0.03, size: 30, speed: 2.8 }
     ];
     
-    // フルーツをランダムに選ぶ(レアリティ考慮)
+    // タッチ/マウス操作
+    function getTouchPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches ? e.touches[0] : e;
+      return touch.clientX - rect.left;
+    }
+    
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      touchActive = true;
+      touchX = getTouchPos(e);
+    });
+    
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (touchActive) {
+        touchX = getTouchPos(e);
+      }
+    });
+    
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      touchActive = false;
+    });
+    
+    // マウス対応(デスクトップでも動く)
+    canvas.addEventListener('mousedown', (e) => {
+      touchActive = true;
+      touchX = getTouchPos(e);
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+      if (touchActive) {
+        touchX = getTouchPos(e);
+      }
+    });
+    
+    canvas.addEventListener('mouseup', () => {
+      touchActive = false;
+    });
+    
+    // フルーツをランダムに選ぶ
     function selectRandomFruit() {
       const rand = Math.random();
       let cumulativeRarity = 0;
@@ -151,7 +212,7 @@
           return fruit;
         }
       }
-      return fruitTypes[0]; // フォールバック
+      return fruitTypes[0];
     }
     
     // 落ちてくる物体を生成
@@ -159,7 +220,6 @@
       const scorpionChance = Math.random();
       
       if (scorpionChance < 0.10) {
-        // 10%の確率でスモール蠍
         return {
           x: Math.random() * (canvas.width - 40) + 20,
           y: -40,
@@ -171,7 +231,6 @@
           points: 0
         };
       } else if (scorpionChance < 0.14) {
-        // 4%の確率でビッグ蠍
         return {
           x: Math.random() * (canvas.width - 50) + 25,
           y: -50,
@@ -183,7 +242,6 @@
           points: 0
         };
       } else {
-        // フルーツ
         const fruit = selectRandomFruit();
         return {
           x: Math.random() * (canvas.width - 40) + 20,
@@ -212,12 +270,10 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
-      // 蠍は少し揺れる演出
       if (obj.isScorpion) {
         const wobble = Math.sin(Date.now() / 100) * 3;
         ctx.fillText(obj.emoji, obj.x + wobble, obj.y);
         
-        // ビッグ蠍には警告マーク
         if (obj.isBigScorpion) {
           ctx.font = '16px serif';
           ctx.fillText('⚠️', obj.x + wobble, obj.y - 35);
@@ -225,7 +281,6 @@
       } else {
         ctx.fillText(obj.emoji, obj.x, obj.y);
         
-        // ポイント表示(高得点フルーツのみ)
         if (obj.points >= 20) {
           ctx.font = '14px Arial';
           ctx.fillStyle = '#FFD700';
@@ -251,10 +306,15 @@
     function gameLoop() {
       if (!gameActive) return;
       
-      // 背景クリア
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // プレイヤー移動
+      // タッチ操作
+      if (touchActive) {
+        const targetX = touchX - player.width / 2;
+        player.x = Math.max(0, Math.min(canvas.width - player.width, targetX));
+      }
+      
+      // キーボード操作
       if (keys['ArrowLeft'] && player.x > 0) {
         player.x -= player.speed;
       }
@@ -272,15 +332,12 @@
         const obj = fallingObjects[i];
         obj.y += obj.speed;
         
-        // キャッチ判定
         if (checkCollision(obj)) {
           if (obj.isScorpion) {
             if (obj.isBigScorpion) {
-              // ビッグ蠍 → 即死!
               endGame('bigScorpion');
               return;
             } else {
-              // スモール蠍 → ライフ減少
               lives--;
               document.getElementById('lives').textContent = lives;
               
@@ -290,7 +347,6 @@
               }
             }
           } else {
-            // フルーツをキャッチ → スコアアップ!
             score += obj.points;
             document.getElementById('score').textContent = score;
           }
@@ -298,7 +354,6 @@
           continue;
         }
         
-        // 地面に落ちた場合(フルーツのみゲームオーバー)
         if (obj.y > canvas.height + 50) {
           if (!obj.isScorpion) {
             endGame('missed');
@@ -311,9 +366,7 @@
         drawFallingObject(obj);
       }
       
-      // プレイヤー描画
       drawPlayer();
-      
       requestAnimationFrame(gameLoop);
     }
     
@@ -327,7 +380,7 @@
       } else if (reason === 'smallScorpion') {
         document.getElementById('gameOverTitle').textContent = '🦂🦂 スモール蠍でライフ尽きた!';
       } else {
-        document.getElementById('gameOverTitle').textContent = 'フルーツを逃した! 😢';
+        document.getElementById('gameOverTitle').textContent = '😢 フルーツを逃した!';
       }
       
       document.getElementById('gameOver').style.display = 'block';
