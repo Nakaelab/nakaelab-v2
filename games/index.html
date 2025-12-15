@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nakae Lab Games 🎮</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .header h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+      font-size: clamp(16px, 2.5vw, 22px);
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 300;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .game-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      text-decoration: none;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .game-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .game-card:nth-child(2) .game-icon {
+      animation-delay: 1.5s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .game-card h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .game-card p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 20px;
+    }
+
+    .game-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: auto;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-link a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    .back-link a:hover {
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .game-card {
+        padding: 30px;
+      }
+      
+      .game-icon {
+        font-size: 60px;
+      }
+      
+      .game-card h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎮 Nakae Lab Games</h1>
+      <p>中江研究室の息抜きゲームコレクション</p>
+    </div>
+
+    <div class="games-grid">
+      <!-- トロピカルフルーツキャッチャー -->
+      <a href="tropical-catcher.html" class="game-card">
+        <div class="game-icon">🌴</div>
+        <h2>トロピカルフルーツキャッチャー</h2>
+        <p>南国のフルーツをキャッチ!サソリを避けて高得点を目指そう。小サソリは3回、大サソリは1回でライフが減るよ!</p>
+        <span class="game-tag">アクションゲーム</span>
+      </a>
+
+      <!-- 単位獲得ゲーム -->
+      <a href="tanigame.html" class="game-card">
+        <div class="game-icon">🎓</div>
+        <h2>単位獲得ゲーム</h2>
+        <p>布団の誘惑を避けて、先生を3人集めて口頭試問クリア!研究室生活をシュールに再現したサバイバルゲーム。</p>
+        <span class="game-tag">研究室シミュレーター</span>
+      </a>
+    </div>
+
+    <div class="back-link">
+      <a href="../index.html">← 研究室トップページへ戻る</a>
+    </div>
+  </div>
+</body>
+</html>
