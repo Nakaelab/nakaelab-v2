@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>南国フルーツキャッチゲーム 🌴</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>中江研 単位獲得ゲーム 🎓</title>
   
   <style>
     * {
@@ -16,7 +16,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(180deg, #87CEEB 0%, #FFE4B5 100%);
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -27,18 +27,18 @@
 
     .game-container {
       text-align: center;
-      color: #333;
+      color: #fff;
       width: 100%;
       max-width: 500px;
       padding: 10px;
     }
 
     #gameCanvas {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(10px);
-      border: 3px solid rgba(255, 255, 255, 0.5);
+      border: 3px solid rgba(102, 126, 234, 0.3);
       touch-action: none;
       max-width: 100%;
       height: auto;
@@ -48,21 +48,28 @@
       font-size: 24px;
       font-weight: bold;
       margin-top: 10px;
-      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
-      color: #2c5530;
+      text-shadow: 0 2px 10px rgba(102, 126, 234, 0.8);
+      color: #ffd700;
     }
 
     .lives {
       font-size: 20px;
       margin-top: 6px;
-      color: #c41e3a;
+      color: #ff6b9d;
       font-weight: bold;
     }
 
-    .scorpion-counter {
+    .teacher-counter {
+      font-size: 22px;
+      margin-top: 8px;
+      color: #4ecdc4;
+      font-weight: bold;
+    }
+
+    .futon-counter {
       font-size: 16px;
       margin-top: 6px;
-      color: #ff6600;
+      color: #ff9a76;
       font-weight: bold;
       min-height: 24px;
     }
@@ -70,7 +77,7 @@
     .instructions {
       margin-top: 10px;
       font-size: 13px;
-      color: #2c5530;
+      color: #c7ecee;
       font-weight: 600;
       line-height: 1.4;
       padding: 0 10px;
@@ -92,7 +99,7 @@
     }
 
     .tutorial-content {
-      background: linear-gradient(135deg, #FFE4B5 0%, #FFDAB9 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 30px;
       border-radius: 20px;
       max-width: 500px;
@@ -105,13 +112,13 @@
     .tutorial-content h1 {
       font-size: 28px;
       margin-bottom: 20px;
-      color: #2c5530;
+      color: #fff;
       text-align: center;
     }
 
     .tutorial-section {
       margin-bottom: 20px;
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.2);
       padding: 15px;
       border-radius: 10px;
     }
@@ -119,7 +126,7 @@
     .tutorial-section h2 {
       font-size: 20px;
       margin-bottom: 10px;
-      color: #2c5530;
+      color: #fff;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -128,20 +135,21 @@
     .tutorial-section p {
       font-size: 15px;
       line-height: 1.6;
-      color: #333;
+      color: #fff;
       margin-bottom: 8px;
     }
 
     .tutorial-section .highlight {
-      background: #fff59d;
+      background: #ffd700;
       padding: 2px 6px;
       border-radius: 4px;
       font-weight: bold;
+      color: #333;
     }
 
     .start-button {
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      color: white;
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      color: #333;
       border: none;
       padding: 18px 50px;
       font-size: 20px;
@@ -151,14 +159,14 @@
       transition: transform 0.2s;
       width: 100%;
       margin-top: 10px;
-      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
     }
 
     .start-button:active {
       transform: scale(0.95);
     }
 
-    /* ゲームオーバー画面 */
+    /* ゲームオーバー/クリア画面 */
     .game-over {
       position: fixed;
       top: 50%;
@@ -186,8 +194,8 @@
     }
 
     .game-over button {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
       border: none;
       padding: 15px 40px;
       font-size: 18px;
@@ -199,6 +207,10 @@
 
     .game-over button:active {
       transform: scale(0.95);
+    }
+
+    .game-clear {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
     }
 
     @media (max-width: 480px) {
@@ -222,11 +234,11 @@
         font-size: 20px;
       }
       
-      .lives {
+      .lives, .teacher-counter {
         font-size: 18px;
       }
       
-      .scorpion-counter {
+      .futon-counter {
         font-size: 14px;
       }
       
@@ -248,18 +260,19 @@
   <!-- 説明画面 -->
   <div class="tutorial-screen" id="tutorialScreen">
     <div class="tutorial-content">
-      <h1>🌴 南国フルーツキャッチ 🌴</h1>
+      <h1>🎓 中江研 単位獲得ゲーム 🎓</h1>
       
       <div class="tutorial-section">
         <h2>🎯 ゲームの目的</h2>
-        <p>かご🧺を動かしてフルーツをキャッチ!<br>フルーツを1つでも逃したら<span class="highlight">ゲームオーバー</span></p>
+        <p>かご🧺を動かして学習アイテムをキャッチ!<br>
+        <span class="highlight">先生👨‍🏫を3人集めたら口頭試問クリア!</span></p>
       </div>
       
       <div class="tutorial-section">
-        <h2>🍌 フルーツの種類</h2>
-        <p>🍌バナナ(5点) 🍎りんご(10点) 🍊みかん(10点)</p>
-        <p>🍉すいか(15点) 🥭マンゴー(20点) 🥥ココナッツ(25点)</p>
-        <p>🍍パイナップル(30点) ← レア!</p>
+        <h2>📚 学習アイテム(集める)</h2>
+        <p>📚本(5点) ✏️鉛筆(10点) 📊論文(15点)</p>
+        <p>🔬実験器具(20点) ☕コーヒー(25点) 💻PC(30点)</p>
+        <p>※アイテムを1つでも逃したら<span class="highlight">即ゲームオーバー</span></p>
       </div>
       
       <div class="tutorial-section">
@@ -268,11 +281,17 @@
       </div>
       
       <div class="tutorial-section">
-        <h2>🦂 サソリに注意!</h2>
-        <p><strong>小サソリ🦂:</strong> <span class="highlight">3回当たる</span>とライフ-1<br>
-        当たった回数は画面に表示されます</p>
-        <p><strong>大サソリ⚠️🦂:</strong> <span class="highlight">1回で</span>ライフ-1<br>
-        でかいので避けやすいよ!</p>
+        <h2>🛏️ 布団に注意!</h2>
+        <p><strong>小布団🛏️:</strong> <span class="highlight">3回当たる</span>とライフ-1<br>
+        「睡眠の誘惑...」</p>
+        <p><strong>大布団⚠️🛏️:</strong> <span class="highlight">1回で</span>ライフ-1<br>
+        「爆睡してしまった!」</p>
+      </div>
+      
+      <div class="tutorial-section">
+        <h2>👨‍🏫 先生を集めよう!</h2>
+        <p><span class="highlight">先生を3人集めたらゲームクリア!</span><br>
+        口頭試問通過で無事卒業 🎓</p>
       </div>
       
       <div class="tutorial-section">
@@ -281,25 +300,27 @@
         <p><strong>PC:</strong> ← → キーで移動</p>
       </div>
       
-      <button class="start-button" onclick="startGame()">ゲームスタート! 🚀</button>
+      <button class="start-button" onclick="startGame()">研究室生活スタート! 🚀</button>
     </div>
   </div>
 
   <div class="game-container">
     <canvas id="gameCanvas" width="400" height="600"></canvas>
-    <div class="score">🥥 スコア: <span id="score">0</span></div>
+    <div class="score">📚 学習ポイント: <span id="score">0</span></div>
     <div class="lives">💚 ライフ: <span id="lives">3</span></div>
-    <div class="scorpion-counter" id="scorpionCounter"></div>
+    <div class="teacher-counter">👨‍🏫 先生: <span id="teachers">0</span>/3</div>
+    <div class="futon-counter" id="futonCounter"></div>
     <div class="instructions">
-      🦂 小サソリ3回 / 大サソリ⚠️1回でライフ-1<br>
-      フルーツを逃すとゲームオーバー!
+      🛏️ 小布団3回 / 大布団⚠️1回でライフ-1<br>
+      先生3人で口頭試問クリア!
     </div>
   </div>
 
   <div class="game-over" id="gameOver">
     <h2 id="gameOverTitle">ゲームオーバー!</h2>
-    <p>スコア: <span id="finalScore">0</span></p>
-    <button onclick="restartGame()">もう一度挑戦 🌴</button>
+    <p id="gameOverMessage"></p>
+    <p>学習ポイント: <span id="finalScore">0</span></p>
+    <button onclick="restartGame()">もう一度挑戦 🔄</button>
   </div>
 
   <script>
@@ -317,22 +338,22 @@
     
     let fallingObjects = [];
     let score = 0;
-    let lives = 3;  // ライフ3つスタート
-    let smallScorpionHits = 0;  // 小サソリヒットカウンター
-    let gameActive = false;  // 最初は説明画面表示のためfalse
+    let lives = 3;
+    let teacherCount = 0;
+    let smallFutonHits = 0;
+    let gameActive = false;
     let keys = {};
     let touchActive = false;
     let touchX = 0;
     
-    // フルーツの種類
-    const fruitTypes = [
-      { emoji: '🍌', points: 5, rarity: 0.25, size: 35, speed: 1.5 },
-      { emoji: '🍎', points: 10, rarity: 0.20, size: 35, speed: 1.8 },
-      { emoji: '🍊', points: 10, rarity: 0.20, size: 35, speed: 1.8 },
-      { emoji: '🍉', points: 15, rarity: 0.15, size: 45, speed: 1.6 },
-      { emoji: '🥭', points: 20, rarity: 0.10, size: 35, speed: 2.2 },
-      { emoji: '🥥', points: 25, rarity: 0.07, size: 38, speed: 2.0 },
-      { emoji: '🍍', points: 30, rarity: 0.03, size: 30, speed: 2.8 }
+    // 学習アイテムの種類
+    const studyItems = [
+      { emoji: '📚', points: 5, rarity: 0.25, size: 35, speed: 1.5 },
+      { emoji: '✏️', points: 10, rarity: 0.20, size: 35, speed: 1.8 },
+      { emoji: '📊', points: 15, rarity: 0.18, size: 35, speed: 2.0 },
+      { emoji: '🔬', points: 20, rarity: 0.12, size: 35, speed: 2.2 },
+      { emoji: '☕', points: 25, rarity: 0.08, size: 35, speed: 2.4 },
+      { emoji: '💻', points: 30, rarity: 0.05, size: 38, speed: 2.6 }
     ];
     
     // タッチ/マウス操作
@@ -360,7 +381,6 @@
       touchActive = false;
     });
     
-    // マウス対応(デスクトップでも動く)
     canvas.addEventListener('mousedown', (e) => {
       touchActive = true;
       touchX = getTouchPos(e);
@@ -376,60 +396,79 @@
       touchActive = false;
     });
     
-    // フルーツをランダムに選ぶ
-    function selectRandomFruit() {
+    // アイテムをランダムに選ぶ
+    function selectRandomItem() {
       const rand = Math.random();
       let cumulativeRarity = 0;
       
-      for (const fruit of fruitTypes) {
-        cumulativeRarity += fruit.rarity;
+      for (const item of studyItems) {
+        cumulativeRarity += item.rarity;
         if (rand <= cumulativeRarity) {
-          return fruit;
+          return item;
         }
       }
-      return fruitTypes[0];
+      return studyItems[0];
     }
     
     // 落ちてくる物体を生成
     function createFallingObject() {
-      const scorpionChance = Math.random();
+      const typeChance = Math.random();
       
-      if (scorpionChance < 0.10) {
-        // 小サソリ
+      // 先生(12%)
+      if (typeChance < 0.12) {
+        return {
+          x: Math.random() * (canvas.width - 50) + 25,
+          y: -50,
+          size: 45,
+          speed: 1.3 + Math.random() * 0.7,
+          emoji: '👨‍🏫',
+          isTeacher: true,
+          isFuton: false,
+          isBigFuton: false,
+          points: 0
+        };
+      }
+      // 小布団(10%)
+      else if (typeChance < 0.22) {
         return {
           x: Math.random() * (canvas.width - 40) + 20,
           y: -40,
           size: 35,
-          speed: 1.8 + Math.random() * 1,
-          emoji: '🦂',
-          isScorpion: true,
-          isBigScorpion: false,
+          speed: 1.6 + Math.random() * 1,
+          emoji: '🛏️',
+          isTeacher: false,
+          isFuton: true,
+          isBigFuton: false,
           points: 0
         };
-      } else if (scorpionChance < 0.14) {
-        // 大サソリ
+      }
+      // 大布団(4%)
+      else if (typeChance < 0.26) {
         return {
-          x: Math.random() * (canvas.width - 50) + 25,
-          y: -50,
+          x: Math.random() * (canvas.width - 55) + 27,
+          y: -55,
           size: 55,
-          speed: 1.2 + Math.random() * 0.8,
-          emoji: '🦂',
-          isScorpion: true,
-          isBigScorpion: true,
+          speed: 1.0 + Math.random() * 0.8,
+          emoji: '🛏️',
+          isTeacher: false,
+          isFuton: true,
+          isBigFuton: true,
           points: 0
         };
-      } else {
-        // フルーツ
-        const fruit = selectRandomFruit();
+      }
+      // 学習アイテム
+      else {
+        const item = selectRandomItem();
         return {
           x: Math.random() * (canvas.width - 40) + 20,
           y: -40,
-          size: fruit.size,
-          speed: fruit.speed + Math.random() * 0.5,
-          emoji: fruit.emoji,
-          isScorpion: false,
-          isBigScorpion: false,
-          points: fruit.points
+          size: item.size,
+          speed: item.speed + Math.random() * 0.5,
+          emoji: item.emoji,
+          isTeacher: false,
+          isFuton: false,
+          isBigFuton: false,
+          points: item.points
         };
       }
     }
@@ -448,20 +487,28 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
-      if (obj.isScorpion) {
-        const wobble = Math.sin(Date.now() / 100) * 3;
+      if (obj.isFuton) {
+        const wobble = Math.sin(Date.now() / 150) * 2;
         ctx.fillText(obj.emoji, obj.x + wobble, obj.y);
         
-        if (obj.isBigScorpion) {
+        if (obj.isBigFuton) {
           ctx.font = '16px serif';
           ctx.fillText('⚠️', obj.x + wobble, obj.y - 35);
         }
+      } else if (obj.isTeacher) {
+        ctx.fillText(obj.emoji, obj.x, obj.y);
+        ctx.font = '14px Arial';
+        ctx.fillStyle = '#4ecdc4';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.strokeText('重要!', obj.x, obj.y + 30);
+        ctx.fillText('重要!', obj.x, obj.y + 30);
       } else {
         ctx.fillText(obj.emoji, obj.x, obj.y);
         
         if (obj.points >= 20) {
           ctx.font = '14px Arial';
-          ctx.fillStyle = '#FFD700';
+          ctx.fillStyle = '#ffd700';
           ctx.strokeStyle = '#000';
           ctx.lineWidth = 2;
           ctx.strokeText('+' + obj.points, obj.x, obj.y + 30);
@@ -480,11 +527,11 @@
       );
     }
     
-    // 小サソリカウンター表示更新
-    function updateScorpionCounter() {
-      const counterElement = document.getElementById('scorpionCounter');
-      if (smallScorpionHits > 0) {
-        counterElement.textContent = `⚠️ 小サソリヒット: ${smallScorpionHits}/3`;
+    // 布団カウンター表示更新
+    function updateFutonCounter() {
+      const counterElement = document.getElementById('futonCounter');
+      if (smallFutonHits > 0) {
+        counterElement.textContent = `⚠️ 小布団ヒット: ${smallFutonHits}/3`;
       } else {
         counterElement.textContent = '';
       }
@@ -511,7 +558,7 @@
       }
       
       // 落下物を生成
-      if (Math.random() < 0.020) {
+      if (Math.random() < 0.022) {
         fallingObjects.push(createFallingObject());
       }
       
@@ -521,35 +568,43 @@
         obj.y += obj.speed;
         
         if (checkCollision(obj)) {
-          if (obj.isScorpion) {
-            if (obj.isBigScorpion) {
-              // 大サソリ: 1回でライフ-1
+          if (obj.isTeacher) {
+            // 先生をゲット
+            teacherCount++;
+            document.getElementById('teachers').textContent = teacherCount;
+            
+            if (teacherCount >= 3) {
+              gameClear();
+              return;
+            }
+          } else if (obj.isFuton) {
+            // 布団
+            if (obj.isBigFuton) {
               lives--;
               document.getElementById('lives').textContent = lives;
               
               if (lives <= 0) {
-                endGame('bigScorpion');
+                endGame('bigFuton');
                 return;
               }
             } else {
-              // 小サソリ: 3回でライフ-1
-              smallScorpionHits++;
-              updateScorpionCounter();
+              smallFutonHits++;
+              updateFutonCounter();
               
-              if (smallScorpionHits >= 3) {
+              if (smallFutonHits >= 3) {
                 lives--;
                 document.getElementById('lives').textContent = lives;
-                smallScorpionHits = 0;  // カウンターリセット
-                updateScorpionCounter();
+                smallFutonHits = 0;
+                updateFutonCounter();
                 
                 if (lives <= 0) {
-                  endGame('smallScorpion');
+                  endGame('smallFuton');
                   return;
                 }
               }
             }
           } else {
-            // フルーツ
+            // 学習アイテム
             score += obj.points;
             document.getElementById('score').textContent = score;
           }
@@ -558,8 +613,8 @@
         }
         
         if (obj.y > canvas.height + 50) {
-          if (!obj.isScorpion) {
-            // フルーツを逃した
+          if (!obj.isFuton) {
+            // アイテムまたは先生を逃した
             endGame('missed');
             return;
           }
@@ -574,20 +629,38 @@
       requestAnimationFrame(gameLoop);
     }
     
+    // ゲームクリア
+    function gameClear() {
+      gameActive = false;
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('gameOverTitle').textContent = '🎓 口頭試問クリア!';
+      document.getElementById('gameOverMessage').textContent = '無事卒業おめでとう!!';
+      
+      const gameOverElement = document.getElementById('gameOver');
+      gameOverElement.classList.add('game-clear');
+      gameOverElement.style.display = 'block';
+    }
+    
     // ゲームオーバー
     function endGame(reason) {
       gameActive = false;
       document.getElementById('finalScore').textContent = score;
       
-      if (reason === 'bigScorpion') {
-        document.getElementById('gameOverTitle').textContent = '🦂💔 大サソリでライフ尽きた!';
-      } else if (reason === 'smallScorpion') {
-        document.getElementById('gameOverTitle').textContent = '🦂🦂🦂 小サソリ3回でライフ尽きた!';
+      const gameOverElement = document.getElementById('gameOver');
+      gameOverElement.classList.remove('game-clear');
+      
+      if (reason === 'bigFuton') {
+        document.getElementById('gameOverTitle').textContent = '🛏️💤 爆睡してしまった!';
+        document.getElementById('gameOverMessage').textContent = '寝過ぎて単位落とした...留年確定!';
+      } else if (reason === 'smallFuton') {
+        document.getElementById('gameOverTitle').textContent = '🛏️🛏️🛏️ 睡眠の誘惑に負けた!';
+        document.getElementById('gameOverMessage').textContent = '小布団3回でライフ尽きた...留年!';
       } else {
-        document.getElementById('gameOverTitle').textContent = '😢 フルーツを逃した!';
+        document.getElementById('gameOverTitle').textContent = '😭 勉強不足!';
+        document.getElementById('gameOverMessage').textContent = 'アイテムを逃して単位取れなかった...';
       }
       
-      document.getElementById('gameOver').style.display = 'block';
+      gameOverElement.style.display = 'block';
     }
     
     // 説明画面を閉じてゲーム開始
@@ -601,13 +674,15 @@
     function restartGame() {
       score = 0;
       lives = 3;
-      smallScorpionHits = 0;
+      teacherCount = 0;
+      smallFutonHits = 0;
       fallingObjects = [];
       gameActive = true;
       player.x = canvas.width / 2 - 40;
       document.getElementById('score').textContent = '0';
       document.getElementById('lives').textContent = '3';
-      updateScorpionCounter();
+      document.getElementById('teachers').textContent = '0';
+      updateFutonCounter();
       document.getElementById('gameOver').style.display = 'none';
       gameLoop();
     }
