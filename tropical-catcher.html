@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport"="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>南国フルーツキャッチゲーム 🌴</title>
   
   <style>
@@ -28,6 +28,9 @@
     .game-container {
       text-align: center;
       color: #333;
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
     }
 
     #gameCanvas {
@@ -37,48 +40,149 @@
       backdrop-filter: blur(10px);
       border: 3px solid rgba(255, 255, 255, 0.5);
       touch-action: none;
+      max-width: 100%;
+      height: auto;
     }
 
     .score {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: bold;
-      margin-top: 15px;
+      margin-top: 10px;
       text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
       color: #2c5530;
     }
 
     .lives {
       font-size: 20px;
-      margin-top: 8px;
+      margin-top: 6px;
       color: #c41e3a;
       font-weight: bold;
     }
 
-    .instructions {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #2c5530;
-      font-weight: 600;
+    .scorpion-counter {
+      font-size: 16px;
+      margin-top: 6px;
+      color: #ff6600;
+      font-weight: bold;
+      min-height: 24px;
     }
 
+    .instructions {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #2c5530;
+      font-weight: 600;
+      line-height: 1.4;
+      padding: 0 10px;
+    }
+
+    /* 説明画面 */
+    .tutorial-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .tutorial-content {
+      background: linear-gradient(135deg, #FFE4B5 0%, #FFDAB9 100%);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .tutorial-content h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #2c5530;
+      text-align: center;
+    }
+
+    .tutorial-section {
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .tutorial-section h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #2c5530;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tutorial-section p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .tutorial-section .highlight {
+      background: #fff59d;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .start-button {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      border: none;
+      padding: 18px 50px;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      width: 100%;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+    }
+
+    .start-button:active {
+      transform: scale(0.95);
+    }
+
+    /* ゲームオーバー画面 */
     .game-over {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.9);
-      padding: 30px 50px;
+      background: rgba(0, 0, 0, 0.95);
+      padding: 30px 40px;
       border-radius: 20px;
       display: none;
       color: white;
       z-index: 1000;
+      max-width: 90%;
+      text-align: center;
     }
 
     .game-over h2 {
-     font-size: 28px;
-     margin-bottom: 15px;
-     writing-mode: horizontal-tb;  /* 横書き強制 */
-      white-space: nowrap;  /* 改行させない */
+      font-size: 24px;
+      margin-bottom: 15px;
+      line-height: 1.3;
+    }
+
+    .game-over p {
+      font-size: 20px;
+      margin-bottom: 25px;
     }
 
     .game-over button {
@@ -97,35 +201,104 @@
       transform: scale(0.95);
     }
 
-    .warning {
-      color: #ff4444;
-      font-weight: bold;
-    }
-
     @media (max-width: 480px) {
-      .score {
+      .tutorial-content {
+        padding: 20px;
+      }
+      
+      .tutorial-content h1 {
         font-size: 24px;
       }
+      
+      .tutorial-section h2 {
+        font-size: 18px;
+      }
+      
+      .tutorial-section p {
+        font-size: 14px;
+      }
+      
+      .score {
+        font-size: 20px;
+      }
+      
       .lives {
         font-size: 18px;
       }
+      
+      .scorpion-counter {
+        font-size: 14px;
+      }
+      
       .instructions {
-        font-size: 12px;
+        font-size: 11px;
+      }
+      
+      .game-over h2 {
+        font-size: 20px;
+      }
+      
+      .game-over p {
+        font-size: 18px;
       }
     }
   </style>
 </head>
 <body>
+  <!-- 説明画面 -->
+  <div class="tutorial-screen" id="tutorialScreen">
+    <div class="tutorial-content">
+      <h1>🌴 南国フルーツキャッチ 🌴</h1>
+      
+      <div class="tutorial-section">
+        <h2>🎯 ゲームの目的</h2>
+        <p>かご🧺を動かしてフルーツをキャッチ!<br>フルーツを1つでも逃したら<span class="highlight">ゲームオーバー</span></p>
+      </div>
+      
+      <div class="tutorial-section">
+        <h2>🍌 フルーツの種類</h2>
+        <p>🍌バナナ(5点) 🍎りんご(10点) 🍊みかん(10点)</p>
+        <p>🍉すいか(15点) 🥭マンゴー(20点) 🥥ココナッツ(25点)</p>
+        <p>🍍パイナップル(30点) ← レア!</p>
+      </div>
+      
+      <div class="tutorial-section">
+        <h2>💚 ライフシステム</h2>
+        <p>ライフは<span class="highlight">3つ</span>スタート!<br>ライフが0になったらゲームオーバー</p>
+      </div>
+      
+      <div class="tutorial-section">
+        <h2>🦂 サソリに注意!</h2>
+        <p><strong>小サソリ🦂:</strong> <span class="highlight">3回当たる</span>とライフ-1<br>
+        当たった回数は画面に表示されます</p>
+        <p><strong>大サソリ⚠️🦂:</strong> <span class="highlight">1回で</span>ライフ-1<br>
+        でかいので避けやすいよ!</p>
+      </div>
+      
+      <div class="tutorial-section">
+        <h2>🎮 操作方法</h2>
+        <p><strong>スマホ:</strong> 画面タッチでかごを移動</p>
+        <p><strong>PC:</strong> ← → キーで移動</p>
+      </div>
+      
+      <button class="start-button" onclick="startGame()">ゲームスタート! 🚀</button>
+    </div>
+  </div>
+
   <div class="game-container">
     <canvas id="gameCanvas" width="400" height="600"></canvas>
     <div class="score">🥥 スコア: <span id="score">0</span></div>
-    <div class="lives">💚 ライフ: <span id="lives">2</span></div>
-    <div class="instructions">画面タッチまたは← → キーで移動 | <span class="warning">🦂 小蠍×2 / 大蠍×1でアウト!</span></div>
+    <div class="lives">💚 ライフ: <span id="lives">3</span></div>
+    <div class="scorpion-counter" id="scorpionCounter"></div>
+    <div class="instructions">
+      🦂 小サソリ3回 / 大サソリ⚠️1回でライフ-1<br>
+      フルーツを逃すとゲームオーバー!
+    </div>
   </div>
 
   <div class="game-over" id="gameOver">
     <h2 id="gameOverTitle">ゲームオーバー!</h2>
-    <p style="font-size: 22px; margin-bottom: 25px;">スコア: <span id="finalScore">0</span></p>
+    <p>スコア: <span id="finalScore">0</span></p>
     <button onclick="restartGame()">もう一度挑戦 🌴</button>
   </div>
 
@@ -144,8 +317,9 @@
     
     let fallingObjects = [];
     let score = 0;
-    let lives = 2;
-    let gameActive = true;
+    let lives = 3;  // ライフ3つスタート
+    let smallScorpionHits = 0;  // 小サソリヒットカウンター
+    let gameActive = false;  // 最初は説明画面表示のためfalse
     let keys = {};
     let touchActive = false;
     let touchX = 0;
@@ -221,6 +395,7 @@
       const scorpionChance = Math.random();
       
       if (scorpionChance < 0.10) {
+        // 小サソリ
         return {
           x: Math.random() * (canvas.width - 40) + 20,
           y: -40,
@@ -232,6 +407,7 @@
           points: 0
         };
       } else if (scorpionChance < 0.14) {
+        // 大サソリ
         return {
           x: Math.random() * (canvas.width - 50) + 25,
           y: -50,
@@ -243,6 +419,7 @@
           points: 0
         };
       } else {
+        // フルーツ
         const fruit = selectRandomFruit();
         return {
           x: Math.random() * (canvas.width - 40) + 20,
@@ -303,6 +480,16 @@
       );
     }
     
+    // 小サソリカウンター表示更新
+    function updateScorpionCounter() {
+      const counterElement = document.getElementById('scorpionCounter');
+      if (smallScorpionHits > 0) {
+        counterElement.textContent = `⚠️ 小サソリヒット: ${smallScorpionHits}/3`;
+      } else {
+        counterElement.textContent = '';
+      }
+    }
+    
     // ゲームループ
     function gameLoop() {
       if (!gameActive) return;
@@ -336,18 +523,33 @@
         if (checkCollision(obj)) {
           if (obj.isScorpion) {
             if (obj.isBigScorpion) {
-              endGame('bigScorpion');
-              return;
-            } else {
+              // 大サソリ: 1回でライフ-1
               lives--;
               document.getElementById('lives').textContent = lives;
               
-              if (lives < 0) {
-                endGame('smallScorpion');
+              if (lives <= 0) {
+                endGame('bigScorpion');
                 return;
+              }
+            } else {
+              // 小サソリ: 3回でライフ-1
+              smallScorpionHits++;
+              updateScorpionCounter();
+              
+              if (smallScorpionHits >= 3) {
+                lives--;
+                document.getElementById('lives').textContent = lives;
+                smallScorpionHits = 0;  // カウンターリセット
+                updateScorpionCounter();
+                
+                if (lives <= 0) {
+                  endGame('smallScorpion');
+                  return;
+                }
               }
             }
           } else {
+            // フルーツ
             score += obj.points;
             document.getElementById('score').textContent = score;
           }
@@ -357,6 +559,7 @@
         
         if (obj.y > canvas.height + 50) {
           if (!obj.isScorpion) {
+            // フルーツを逃した
             endGame('missed');
             return;
           }
@@ -377,9 +580,9 @@
       document.getElementById('finalScore').textContent = score;
       
       if (reason === 'bigScorpion') {
-        document.getElementById('gameOverTitle').textContent = '🦂💀 ビッグ蠍に刺された!';
+        document.getElementById('gameOverTitle').textContent = '🦂💔 大サソリでライフ尽きた!';
       } else if (reason === 'smallScorpion') {
-        document.getElementById('gameOverTitle').textContent = '🦂🦂 スモール蠍でライフ尽きた!';
+        document.getElementById('gameOverTitle').textContent = '🦂🦂🦂 小サソリ3回でライフ尽きた!';
       } else {
         document.getElementById('gameOverTitle').textContent = '😢 フルーツを逃した!';
       }
@@ -387,15 +590,24 @@
       document.getElementById('gameOver').style.display = 'block';
     }
     
+    // 説明画面を閉じてゲーム開始
+    function startGame() {
+      document.getElementById('tutorialScreen').style.display = 'none';
+      gameActive = true;
+      gameLoop();
+    }
+    
     // ゲーム再開
     function restartGame() {
       score = 0;
-      lives = 2;
+      lives = 3;
+      smallScorpionHits = 0;
       fallingObjects = [];
       gameActive = true;
       player.x = canvas.width / 2 - 40;
       document.getElementById('score').textContent = '0';
-      document.getElementById('lives').textContent = '2';
+      document.getElementById('lives').textContent = '3';
+      updateScorpionCounter();
       document.getElementById('gameOver').style.display = 'none';
       gameLoop();
     }
@@ -408,9 +620,6 @@
     document.addEventListener('keyup', (e) => {
       keys[e.key] = false;
     });
-    
-    // ゲーム開始
-    gameLoop();
   </script>
 </body>
 </html>
